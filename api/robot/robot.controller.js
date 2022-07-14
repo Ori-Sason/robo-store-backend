@@ -32,7 +32,9 @@ async function getRobots(req, res) {
 
 async function getRobotById(req, res) {
     try {
-
+        const robot = await robotService.getById(req.params.robotId)
+        if (!robot) return res.status(401).send('Failed to get robot')
+        res.send(robot)
     } catch (err) {
         // logger.error('Failed to get robot', err)
         res.status(500).send({ err: 'Failed to get robot' })
@@ -41,7 +43,9 @@ async function getRobotById(req, res) {
 
 async function addRobot(req, res) {
     try {
-
+        const savedRobot = await robotService.add(req.body)
+        if (!savedRobot) return res.status(401).send('Failed to add robot')
+        res.send(savedRobot)
     } catch (err) {
         // logger.error('Failed to add robot', err)
         res.status(500).send({ err: 'Failed to add robot' })
@@ -50,7 +54,9 @@ async function addRobot(req, res) {
 
 async function updateRobot(req, res) {
     try {
-
+        const savedRobot = await robotService.update(req.body)
+        if (!savedRobot) return res.status(401).send('Failed to update robot')
+        res.send(savedRobot)
     } catch (err) {
         // logger.error('Failed to update robot', err)
         res.status(500).send({ err: 'Failed to update robot' })
@@ -59,7 +65,9 @@ async function updateRobot(req, res) {
 
 async function removeRobot(req, res) {
     try {
-
+        const deletedCount = await robotService.remove(req.params.robotId)
+        if (!deletedCount) return res.status(401).send('Failed to remove robot')
+        res.send('robot removed successfully')
     } catch (err) {
         // logger.error('Failed to remove robot', err)
         res.status(500).send({ err: 'Failed to remove robot' })
