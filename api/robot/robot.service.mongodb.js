@@ -5,6 +5,7 @@ const ObjectId = require('mongodb').ObjectId
 const gLabels = ["On wheels", "Box game", "Art", "Baby", "Doll", "Puzzle", "Outdoor"] /* FIX - make a collection in mongo */
 
 const COLLECTION_NAME = 'robot'
+const PAGE_SIZE = 30
 
 module.exports = {
     getLabels,
@@ -52,7 +53,16 @@ async function query(filterBy) {
         //     return toy
         // })
 
-        return robots
+        let pageIdx = +filterBy.pageIdx
+        const numOfPages = Math.ceil(robots.length / PAGE_SIZE)
+
+        if (pageIdx < 0) pageIdx = numOfPages
+        else if (pageIdx > numOfPages - 1) pageIdx = 0
+        filterBy = { ...filterBy, pageIdx, numOfPages }
+
+        robots = robots.slice(PAGE_SIZE * pageIdx, PAGE_SIZE * (pageIdx + 1))
+
+        return { robots, filterBy }
 
     } catch (err) {
         console.log(`ERROR: cannot find robots`)
