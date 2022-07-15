@@ -30,9 +30,8 @@ async function query(filterBy) {
         criteria.name = { $regex: regex }
     }
 
-    if (inStock) {
-        inStock = inStock === 'all' ? 'all' : inStock === 'true'
-        criteria.inStock = inStock
+    if (inStock !== undefined && inStock !== 'all') {
+        criteria.inStock = inStock === 'true'
     }
 
     if (labels && labels.length > 0) {
