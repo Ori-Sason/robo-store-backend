@@ -24,7 +24,8 @@ function getLabels() {
 async function query(filterBy) {
 
     const criteria = {}
-    const { name, labels, inStock, sortBy } = filterBy
+    console.log('JSON.parse(filterBy)', filterBy)
+    const { name, labels, inStock, owner, sortBy } = filterBy
 
     if (name) {
         const regex = new RegExp(name, 'i')
@@ -38,6 +39,10 @@ async function query(filterBy) {
     if (labels && labels.length > 0) {
         criteria.labels = { $in: labels } //in creates an OR query. At least one elements has to be in database array
         // criteria.labels = { $all: labels } //in creates an AND query. All the elements has to be in database array
+    }
+
+    if (owner) {
+        criteria['owner._id'] = ObjectId(JSON.parse(owner)._id)
     }
 
     try {

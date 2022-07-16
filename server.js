@@ -31,7 +31,7 @@ const robotRoutes = require('./api/robot/robot.routes')
 // const {setupSocketAPI} = require('./services/socket.service')
 
 app.use('/api/auth', authRoutes)
-// app.use('/api/user', userRoutes)
+app.use('/api/user', userRoutes)
 app.use('/api/robot', robotRoutes)
 // app.use('/api/review', reviewRoutes)
 // setupSocketAPI(http)
