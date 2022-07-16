@@ -34,7 +34,10 @@ async function requireRobotOwnerOrAdmin(req, res, next) {
     if (!req?.cookies?.[cookieName]) return res.status(401).send('Not Authenticated')
 
     const loggedInUser = authService.validateToken(req.cookies[cookieName])
-    const robot = await robotService.getById(req.params.robotId)
+    const robotId = req.body._id || req.params.robotId
+    const robot = await robotService.getById(robotId)
+
+    console.log('robot', robot)
 
     if (!loggedInUser.isAdmin && loggedInUser._id !== robot.owner._id.toString()) {
         // logger.warn(`${loggedInUser.fullname} attempted to edit another user robot`)
