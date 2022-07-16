@@ -9,6 +9,6 @@ module.exports = router
 router.get('/labels', getLabels)
 router.get('/', getRobots) //log
 router.get('/:robotId', getRobotById)
-router.post('/', requireAuth, requireAdmin, addRobot)
-router.put('/', requireAuth, requireAdmin, updateRobot)
-router.delete('/:robotId', requireAuth, requireAdmin, removeRobot)
+router.post('/', requireAuth, addRobot) //requireAdmin
+router.put('/', requireRobotOwnerOrAdmin, updateRobot) //requireAuth, requireAdmin
+router.delete('/:robotId', requireRobotOwnerOrAdmin, removeRobot) //requireAuth, requireAdmin

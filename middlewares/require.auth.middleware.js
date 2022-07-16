@@ -22,7 +22,7 @@ async function requireAdmin(req, res, next) {
     const loggedInUser = authService.validateToken(req.cookies[cookieName])
 
     if (!loggedInUser.isAdmin) {
-        logger.warn(`${loggedinUser.fullname} attempted to perform admin action`)
+        // logger.warn(`${loggedinUser.fullname} attempted to perform admin action`)
         res.status(403).end('Not Authorized') //notice the end, which means that there are no following middlewares
         return
     }
@@ -31,13 +31,13 @@ async function requireAdmin(req, res, next) {
 }
 
 async function requireRobotOwnerOrAdmin(req, res, next) {
-    if (!req?.cookies?.cookieName) return res.status(401).send('Not Authenticated')
+    if (!req?.cookies?.[cookieName]) return res.status(401).send('Not Authenticated')
 
-    const loggedInUser = authService.validateToken(req.cookies.cookieName)
-    const robot = await robotService.getById(req.body._id)
+    const loggedInUser = authService.validateToken(req.cookies[cookieName])
+    const robot = await robotService.getById(req.params.robotId)
 
-    if (!loggedinUser.isAdmin && loggedInUser._id !== robot.owner._id) {
-        logger.warn(`${loggedinUser.fullname} attempted to edit another user robot`)
+    if (!loggedInUser.isAdmin && loggedInUser._id !== robot.owner._id.toString()) {
+        // logger.warn(`${loggedInUser.fullname} attempted to edit another user robot`)
         res.status(403).end('Not Authorized')
         return
     }
