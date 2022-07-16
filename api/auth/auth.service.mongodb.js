@@ -16,8 +16,8 @@ async function login(username, password) {
     try {
         const user = await userService.getByUsername(username)
         if (!user) return Promise.reject('Invalid username or password')
+        
         const match = await bcrypt.compare(password, user.password)
-        console.log('match', match)
         if (!match) return Promise.reject('Invalid username or password')
 
         delete user.password
@@ -47,5 +47,12 @@ function getLoginToken(user) {
 }
 
 function validateToken(loginToken) {
-
+    try {
+        const json = cryptr.decrypt(loginToken)
+        const loggedInUser = JSON.parse(json)
+        return loggedInUser
+    } catch (err) {
+        console.log('Invalid login token (auth.service - validateToken)')
+    }
+    return null
 }

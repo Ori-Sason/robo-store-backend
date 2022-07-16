@@ -6,7 +6,8 @@ const COOKIE_NAME = 'loginToken'
 module.exports = {
     login,
     signup,
-    logout
+    logout,
+    COOKIE_NAME
 }
 
 async function login(req, res) {

@@ -13,6 +13,7 @@ async function getByUsername(username) {
         const user = await collection.findOne({ username })
         return user
     } catch (err) {
+        console.log(`ERROR: cannot find user ${username} (user.service - getByUsername)`)
         // logger.error(`cannot find user ${username}`, err)
         throw err
     }
@@ -27,9 +28,10 @@ async function add(user) {
             isAdmin: false
         }
         const collection = await dbService.getCollection(COLLECTION_NAME)
-        const user = await collection.insertOne(newUser)
+        await collection.insertOne(newUser)
         return newUser
     } catch (err) {
+        console.log(`ERROR: cannot add user (user.service - add)`)
         // logger.error('cannot add user', err)
         throw err
     }

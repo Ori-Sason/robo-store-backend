@@ -65,7 +65,7 @@ async function query(filterBy) {
         return { robots, filterBy }
 
     } catch (err) {
-        console.log(`ERROR: cannot find robots`)
+        console.log(`ERROR: cannot find robots (robot.service - query)`)
         console.log('err', err)
         throw err
     }
@@ -81,7 +81,7 @@ async function getById(robotId) {
 
         return robot
     } catch (err) {
-        console.log(`ERROR: cannot find robot ${robotId}`)
+        console.log(`ERROR: cannot find robot ${robotId} (robot.service - getById)`)
         throw err
     }
 }
@@ -104,7 +104,7 @@ async function add(robot) {
         newRobot._id = res.insertedId
         return newRobot
     } catch (err) {
-        console.log('ERROR: cannot add robot')
+        console.log('ERROR: cannot add robot (robot.service - add)')
         throw err
     }
 }
@@ -131,7 +131,7 @@ async function update(robot) {
         if (!res.acknowledged) return null //will cause error 401
         return { ...robot, lastModified }
     } catch (err) {
-        console.log(`ERROR: cannot update robot ${robot._id}`)
+        console.log(`ERROR: cannot update robot ${robot._id} (robot.service - update)`)
         throw err
     }
 }
@@ -151,7 +151,7 @@ async function addToChat(robotId, msg) {
     try {
 
     } catch (err) {
-        console.log(`ERROR: cannot add to chat of robot ${robot._id}`)
+        console.log(`ERROR: cannot add to chat of robot ${robot._id} (robot.service - remove)`)
         throw err
     }
 }
