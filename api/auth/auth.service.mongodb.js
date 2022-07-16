@@ -33,6 +33,9 @@ async function signup(username, password, fullname) {
     if (!username || !password || !fullname) return Promise.reject('fullname, username and password are required!')
 
     try {
+        const user = await userService.getByUsername(username)
+        if (user) return Promise.reject('Username already taken')
+
         const saltRounds = 10
         const hash = await bcrypt.hash(password, saltRounds)
         return userService.add({ username, password: hash, fullname })
