@@ -22,7 +22,8 @@ async function getLabels(req, res) {
 
 async function getRobots(req, res) {
     try {
-        const robots = await robotService.query(req.query || '{}')
+        const filterBy = req.body
+        const robots = await robotService.query(filterBy || '{}')
         res.send(robots)
     } catch (err) {
         // logger.error('Failed to get robots', err)
@@ -43,7 +44,8 @@ async function getRobotById(req, res) {
 
 async function addRobot(req, res) {
     try {
-        const savedRobot = await robotService.add(req.body)
+        const robot = req.body
+        const savedRobot = await robotService.add(robot)
         if (!savedRobot) return res.status(401).send('Failed to add robot')
         res.send(savedRobot)
     } catch (err) {
@@ -54,7 +56,8 @@ async function addRobot(req, res) {
 
 async function updateRobot(req, res) {
     try {
-        const savedRobot = await robotService.update(req.body)
+        const robot = req.body
+        const savedRobot = await robotService.update(robot)
         if (!savedRobot) return res.status(401).send('Failed to update robot')
         res.send(savedRobot)
     } catch (err) {
