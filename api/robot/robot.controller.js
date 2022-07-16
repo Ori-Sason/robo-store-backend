@@ -22,7 +22,7 @@ async function getLabels(req, res) {
 
 async function getRobots(req, res) {
     try {
-        const filterBy = req.body
+        const filterBy = req.query
         const robots = await robotService.query(filterBy || '{}')
         res.send(robots)
     } catch (err) {

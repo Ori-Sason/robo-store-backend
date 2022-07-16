@@ -22,7 +22,7 @@ function getLabels() {
 }
 
 async function query(filterBy) {
-
+        
     const criteria = {}
     const { name, labels, inStock, sortBy } = filterBy
 
@@ -53,6 +53,7 @@ async function query(filterBy) {
         //     return toy
         // })
 
+        
         let pageIdx = +filterBy.pageIdx
         const numOfPages = Math.ceil(robots.length / PAGE_SIZE)
 
