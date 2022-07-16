@@ -22,7 +22,7 @@ function getLabels() {
 }
 
 async function query(filterBy) {
-        
+
     const criteria = {}
     const { name, labels, inStock, sortBy } = filterBy
 
@@ -53,7 +53,7 @@ async function query(filterBy) {
         //     return toy
         // })
 
-        
+
         let pageIdx = +filterBy.pageIdx
         const numOfPages = Math.ceil(robots.length / PAGE_SIZE)
 
@@ -87,7 +87,7 @@ async function getById(robotId) {
     }
 }
 
-async function add(robot) {
+async function add(robot, user) {
     try {
         const collection = await dbService.getCollection(COLLECTION_NAME)
 
@@ -97,11 +97,15 @@ async function add(robot) {
             price: robot.price,
             labels: robot.labels,
             inStock: robot.inStock,
+            owner: {
+                _id: ObjectId(user._id),
+                fullname: user.fullname
+            },
             createdAt: Date.now(),
         }
 
         const res = await collection.insertOne(newRobot)
-        if (!res.acknowledged) return null//will cause error 401
+        if (!res.acknowledged) return null //will cause error 401
         newRobot._id = res.insertedId
         return newRobot
     } catch (err) {
