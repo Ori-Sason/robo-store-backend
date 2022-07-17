@@ -10,6 +10,7 @@ module.exports = {
     getByUsername,
     add,
     update,
+    updateAdmin,
     remove
 }
 
@@ -100,6 +101,26 @@ async function update(user) {
         return { ...user, lastModified }
     } catch (err) {
         console.log(`ERROR: cannot update user (user.service - update)`)
+        // logger.error('cannot add user', err)
+        throw err
+    }
+}
+async function updateAdmin(user) {
+    try {
+        const lastModified = Date.now()
+
+        const updatedUser = {
+            _id: ObjectId(user._id),
+            isAdmin: user.isAdmin,
+            lastModified
+        }
+
+        const collection = await dbService.getCollection(COLLECTION_NAME)
+        const res = await collection.updateOne({ _id: updatedUser._id }, { $set: updatedUser })
+        if (!res.acknowledged) return null //will cause error 401
+        return { ...user, lastModified }
+    } catch (err) {
+        console.log(`ERROR: cannot update user admin mode (user.service - updateAdmin)`)
         // logger.error('cannot add user', err)
         throw err
     }

@@ -5,6 +5,7 @@ module.exports = {
     getUserById,
     addUser,
     updateUser,
+    updateUserAdmin,
     removeUser
 }
 
@@ -56,6 +57,18 @@ async function updateUser(req, res) {
     }
 }
 
+async function updateUserAdmin(req, res) {
+    try {
+        const user = req.body
+        const savedUser = await userService.updateAdmin(user)
+        if (!savedUser) return res.status(401).send('Failed to update user admin mode')
+        res.send(savedUser)
+    } catch (err) {
+        // logger.error('Failed to update user admin mode', err)
+        res.status(500).send({ err: 'Failed to update user admin mode' })
+    }
+}
+
 async function removeUser(req, res) {
     try {
         const { userId } = req.params
@@ -64,6 +77,6 @@ async function removeUser(req, res) {
         res.send('user removed successfully')
     } catch (err) {
         // logger.error('Failed to remove user', err)
-        res.status(500).send({ err: 'Failed to remove user' })
+        res.status(500).send({ err: 'Failed to remove user ' })
     }
 }
