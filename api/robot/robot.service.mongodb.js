@@ -24,7 +24,6 @@ function getLabels() {
 async function query(filterBy) {
 
     const criteria = {}
-    console.log('JSON.parse(filterBy)', filterBy)
     const { name, labels, inStock, owner, sortBy } = filterBy
 
     if (name) {

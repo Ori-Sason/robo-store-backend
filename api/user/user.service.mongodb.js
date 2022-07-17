@@ -4,9 +4,30 @@ const dbService = require('../../services/mongodb.service')
 const COLLECTION_NAME = 'user'
 
 module.exports = {
+    query,
     getById,
     getByUsername,
     add,
+    update,
+    remove
+}
+
+async function query() {
+    try {
+        /* FIX - add filterBy if needed */
+        const collection = await dbService.getCollection(COLLECTION_NAME)
+        let users = await collection.find().toArray()
+        users = users.map(user => {
+            delete user.password
+            // user.createdAt = ObjectId(user._id).getTimestamp()
+            return user
+        })
+        return users
+    } catch (err) {
+        console.log(`ERROR: cannot find users (user.service - query)`)
+        // logger.error(`cannot find users`, err)
+        throw err
+    }
 }
 
 async function getById(userId) {
@@ -43,10 +64,46 @@ async function add(user) {
             isAdmin: false
         }
         const collection = await dbService.getCollection(COLLECTION_NAME)
-        await collection.insertOne(newUser)
+        const res = await collection.insertOne(newUser)
+        if (!res.acknowledged) return null //will cause error 401
+        newUser._id = res.insertedId
         return newUser
     } catch (err) {
         console.log(`ERROR: cannot add user (user.service - add)`)
+        // logger.error('cannot add user', err)
+        throw err
+    }
+}
+
+async function update(user) {
+    try {
+        const lastModified = Date.now()
+
+        const updatedUser = {
+            _id: ObjectId(user._id),
+            username: user.username,
+            password: user.password,
+            fullname: user.fullname,
+            lastModified
+        }
+        const collection = await dbService.getCollection(COLLECTION_NAME)
+        const res = await collection.updateOne({ _id: updatedUser._id }, { $set: updatedUser })
+        if (!res.acknowledged) return null //will cause error 401
+        return { ...user, lastModified }
+    } catch (err) {
+        console.log(`ERROR: cannot update user (user.service - update)`)
+        // logger.error('cannot add user', err)
+        throw err
+    }
+}
+
+async function remove(userId) {
+    try {
+        const collection = await dbService.getCollection(COLLECTION_NAME)
+        const deletedCount = await collection.deleteOne({ _id: ObjectId(userId) })
+        return deletedCount
+    } catch (err) {
+        console.log(`ERROR: cannot delete user (user.service - remove)`)
         // logger.error('cannot add user', err)
         throw err
     }

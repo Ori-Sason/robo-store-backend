@@ -37,8 +37,6 @@ async function requireRobotOwnerOrAdmin(req, res, next) {
     const robotId = req.body._id || req.params.robotId
     const robot = await robotService.getById(robotId)
 
-    console.log('robot', robot)
-
     if (!loggedInUser.isAdmin && loggedInUser._id !== robot.owner._id.toString()) {
         // logger.warn(`${loggedInUser.fullname} attempted to edit another user robot`)
         res.status(403).end('Not Authorized')
