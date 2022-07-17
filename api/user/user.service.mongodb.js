@@ -96,6 +96,7 @@ async function update(user) {
         const collection = await dbService.getCollection(COLLECTION_NAME)
         const res = await collection.updateOne({ _id: updatedUser._id }, { $set: updatedUser })
         if (!res.acknowledged) return null //will cause error 401
+        delete user.password
         return { ...user, lastModified }
     } catch (err) {
         console.log(`ERROR: cannot update user (user.service - update)`)

@@ -1,5 +1,6 @@
 const express = require('express')
-const { requireAuth, requireAdmin, requireRobotOwnerOrAdmin } = require('../../middlewares/require.auth.middleware')
+const { requireAuth, requireAdmin } = require('../../middlewares/require.auth.middleware')
+const { requireRobotOwnerOrAdmin } = require('../../middlewares/require.robot.middleware')
 //log
 const { getLabels, getRobots, getRobotById, addRobot, updateRobot, removeRobot } = require('./robot.controller')
 const router = express.Router()
