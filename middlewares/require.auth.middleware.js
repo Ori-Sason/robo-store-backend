@@ -12,7 +12,7 @@ module.exports = {
 async function requireAuth(req, res, next) {
     if (!req?.cookies?.[cookieName]) return res.status(401).send('Not Authenticated')
     const loggedInUser = authService.validateToken(req.cookies[cookieName])
-    
+
     if (!loggedInUser) return res.status(401).send('Not Authenticated')
     next()
 }
@@ -41,6 +41,26 @@ async function requireRobotOwnerOrAdmin(req, res, next) {
         // logger.warn(`${loggedInUser.fullname} attempted to edit another user robot`)
         res.status(403).end('Not Authorized')
         return
+    }
+
+    next()
+}
+
+async function requireUserPasswordOrAdmin(req, res, next) {
+    if (!req.cookies?.[cookieName]) return res.status(401).send('Not Authenticated')
+
+    const loggedInUser = authService.validateToken(req.cookies[cookieName])
+
+    if (loggedInUser.isAdmin) return next()
+    if (loggedInUser.username !== req.body.username) return res.status(403).end('Not Authorized')
+
+    const { password } = req.body
+
+    try {
+        await authService.login(loggedInUser.username, password)
+    } catch (err) {
+        // logger.warn(`${loggedInUser.fullname} attempted to edit another user`)
+        return res.status(401).end('Wrong password')
     }
 
     next()

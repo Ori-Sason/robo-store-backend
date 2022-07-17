@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb')
+const bcrypt = require('bcrypt')
 const dbService = require('../../services/mongodb.service')
 
 const COLLECTION_NAME = 'user'
@@ -82,10 +83,16 @@ async function update(user) {
         const updatedUser = {
             _id: ObjectId(user._id),
             username: user.username,
-            password: user.password,
             fullname: user.fullname,
             lastModified
         }
+
+        if (user.newPassword) {
+            const saltRounds = 10
+            const hash = await bcrypt.hash(user.newPassword, saltRounds)
+            updatedUser.password = hash
+        }
+
         const collection = await dbService.getCollection(COLLECTION_NAME)
         const res = await collection.updateOne({ _id: updatedUser._id }, { $set: updatedUser })
         if (!res.acknowledged) return null //will cause error 401
