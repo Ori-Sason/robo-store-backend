@@ -82,7 +82,7 @@ async function getById(robotId) {
         const robot = collection.findOne({ _id: ObjectId(robotId) })
 
         /* Since I created fake createdAt times, I don't use these lines. It's here as a reference  */
-        // toy.createdAt = ObjectId(toy._id).getTimestamp()
+        // robot.createdAt = ObjectId(robot._id).getTimestamp()
 
         return robot
     } catch (err) {
@@ -137,7 +137,7 @@ async function update(robot) {
             }
         )
 
-        if (!res.acknowledged) return null //will cause error 401
+        if (!res.modifiedCount) return null //will cause error 401
         return { ...robot, lastModified }
     } catch (err) {
         console.log(`ERROR: cannot update robot ${robot._id} (robot.service - update)`)

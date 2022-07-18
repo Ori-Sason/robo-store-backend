@@ -27,13 +27,13 @@ if (process.env.NODE_ENV === 'production') {
 const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
 const robotRoutes = require('./api/robot/robot.routes')
-// const reviewRoutes = require('./api/review/review.routes')
+const reviewRoutes = require('./api/review/review.routes')
 // const {setupSocketAPI} = require('./services/socket.service')
 
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/robot', robotRoutes)
-// app.use('/api/review', reviewRoutes)
+app.use('/api/review', reviewRoutes)
 // setupSocketAPI(http)
 
 /* LAST FALLBACK */
