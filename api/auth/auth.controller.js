@@ -7,7 +7,6 @@ module.exports = {
     login,
     signup,
     logout,
-    COOKIE_NAME
 }
 
 async function login(req, res) {

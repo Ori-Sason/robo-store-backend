@@ -21,8 +21,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 /* ROUTES */
-// const setupAsyncLocalStorage = require('') /* FIX -  */
-// app.all('*', setupAsyncLocalStorage)
+const setupAsyncLocalStorage = require('./middlewares/setup.als.middleware')
+app.all('*', setupAsyncLocalStorage)
 
 const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')

@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb')
 const dbService = require('../../services/mongodb.service')
+const alsService = require('../../services/als.service')
 
 const COLLECTION_NAME = 'review'
 
@@ -52,7 +53,7 @@ async function query(filterBy) {
 
         reviews = reviews.map(review => {
             review.byUser = { _id: review.byUser._id, fullname: review.byUser.fullname }
-            review.byRobot = { _id: review.byRobot._id, name: review.byRobot.name, price: review.byRobot.price, img: review.byRobot.img, owner: review.byRobot.owner }
+            review.byRobot = { _id: review.byRobot._id, name: review.byRobot.name, price: review.byRobot.price, owner: review.byRobot.owner }
             review.createdAt = ObjectId(review._id).getTimestamp()
             delete review.userId
             delete review.robotId
@@ -85,8 +86,10 @@ async function getById(reviewId) {
     }
 }
 
-async function add(review, loggedInUser) {
+async function add(review) {
     try {
+        const {loggedInUser} = alsService.getStore()
+        
         const collection = await dbService.getCollection(COLLECTION_NAME)
 
         const newReview = {

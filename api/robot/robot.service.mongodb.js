@@ -1,4 +1,5 @@
 const dbService = require('../../services/mongodb.service')
+const alsService = require('../../services/als.service')
 //logger
 const ObjectId = require('mongodb').ObjectId
 
@@ -91,8 +92,9 @@ async function getById(robotId) {
     }
 }
 
-async function add(robot, user) {
+async function add(robot) {
     try {
+        const { loggedInUser } = alsService.getStore()
         const collection = await dbService.getCollection(COLLECTION_NAME)
 
         const newRobot = {
@@ -102,8 +104,8 @@ async function add(robot, user) {
             labels: robot.labels,
             inStock: robot.inStock,
             owner: {
-                _id: ObjectId(user._id),
-                fullname: user.fullname
+                _id: ObjectId(loggedInUser._id),
+                fullname: loggedInUser.fullname
             },
             createdAt: Date.now(),
         }
@@ -120,11 +122,16 @@ async function add(robot, user) {
 
 async function update(robot) {
     try {
+        const criteria = { _id: ObjectId(robot._id) }
+        const { loggedInUser } = alsService.getStore()
+        //only the owner of the robot, or admin, can update the robot
+        if (!loggedInUser?.isAdmin) criteria['owner._id'] = ObjectId(loggedInUser._id)
+
         const collection = await dbService.getCollection(COLLECTION_NAME)
         const lastModified = Date.now()
 
         const res = await collection.updateOne(
-            { _id: ObjectId(robot._id) },
+            criteria,
             {
                 $set: {
                     name: robot.name,
@@ -147,8 +154,13 @@ async function update(robot) {
 
 async function remove(robotId) {
     try {
+        const criteria = { _id: ObjectId(robotId) }
+        const { loggedInUser } = alsService.getStore()
+        //only the owner of the robot, or admin, can remove the robot
+        if (!loggedInUser?.isAdmin) criteria['owner._id'] = ObjectId(loggedInUser._id)
+
         const collection = await dbService.getCollection(COLLECTION_NAME)
-        const { deletedCount } = await collection.deleteOne({ _id: ObjectId(robotId) })
+        const { deletedCount } = await collection.deleteOne(criteria)
         return deletedCount
     } catch (err) {
         console.log(`ERROR: cannot remove robot ${robot._id}`)

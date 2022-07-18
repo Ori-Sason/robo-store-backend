@@ -1,6 +1,4 @@
 const reviewService = require('./review.service.mongodb')
-const cookieName = require('../auth/auth.controller').COOKIE_NAME
-const authService = require('../auth/auth.service.mongodb')
 // const logger = require('../../services/logger.service')
 
 module.exports = {
@@ -36,8 +34,7 @@ async function getReviewById(req, res) {
 async function addReview(req, res) {
     try {
         const review = req.body
-        const loggedInUser = authService.validateToken(req.cookies[cookieName])
-        const savedReview = await reviewService.add(review, loggedInUser)
+        const savedReview = await reviewService.add(review)
         if (!savedReview) return res.status(401).send('Failed to add review')
         res.send(savedReview)
     } catch (err) {

@@ -1,6 +1,4 @@
 const robotService = require('./robot.service.mongodb')
-const cookieName = require('../auth/auth.controller').COOKIE_NAME
-const authService = require('../auth/auth.service.mongodb')
 // const logger = require('../../services/logger.service')
 
 module.exports = {
@@ -47,8 +45,7 @@ async function getRobotById(req, res) {
 async function addRobot(req, res) {
     try {
         const robot = req.body
-        const loggedInUser = authService.validateToken(req.cookies[cookieName])
-        const savedRobot = await robotService.add(robot, loggedInUser)
+        const savedRobot = await robotService.add(robot)
         if (!savedRobot) return res.status(401).send('Failed to add robot')
         res.send(savedRobot)
     } catch (err) {
