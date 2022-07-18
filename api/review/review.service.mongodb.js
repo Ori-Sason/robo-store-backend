@@ -49,7 +49,8 @@ async function add(review, loggedInUser) {
         }
 
         const res = await collection.insertOne(newReview)
-        if (!res.acknowledged) return null //will cause error 401
+        console.log('res', res)
+        if (!res.insertedId) return null //will cause error 401
         newReview._id = res.insertedId
         return newReview
     } catch (err) {

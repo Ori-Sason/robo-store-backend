@@ -109,7 +109,7 @@ async function add(robot, user) {
         }
 
         const res = await collection.insertOne(newRobot)
-        if (!res.acknowledged) return null //will cause error 401
+        if (!res.insertedId) return null //will cause error 401
         newRobot._id = res.insertedId
         return newRobot
     } catch (err) {

@@ -67,7 +67,7 @@ async function add(user) {
         }
         const collection = await dbService.getCollection(COLLECTION_NAME)
         const res = await collection.insertOne(newUser)
-        if (!res.acknowledged) return null //will cause error 401
+        if (!res.insertedId) return null //will cause error 401
         newUser._id = res.insertedId
         return newUser
     } catch (err) {
