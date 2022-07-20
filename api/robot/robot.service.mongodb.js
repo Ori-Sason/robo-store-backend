@@ -125,7 +125,7 @@ async function update(robot) {
         const criteria = { _id: ObjectId(robot._id) }
         const { loggedInUser } = alsService.getStore()
         //only the owner of the robot, or admin, can update the robot
-        if (!loggedInUser?.isAdmin) criteria['owner._id'] = ObjectId(loggedInUser._id)
+        if (!loggedInUser.isAdmin) criteria['owner._id'] = ObjectId(loggedInUser._id)
 
         const collection = await dbService.getCollection(COLLECTION_NAME)
         const lastModified = Date.now()
@@ -157,7 +157,7 @@ async function remove(robotId) {
         const criteria = { _id: ObjectId(robotId) }
         const { loggedInUser } = alsService.getStore()
         //only the owner of the robot, or admin, can remove the robot
-        if (!loggedInUser?.isAdmin) criteria['owner._id'] = ObjectId(loggedInUser._id)
+        if (!loggedInUser.isAdmin) criteria['owner._id'] = ObjectId(loggedInUser._id)
 
         const collection = await dbService.getCollection(COLLECTION_NAME)
         const { deletedCount } = await collection.deleteOne(criteria)
@@ -170,7 +170,10 @@ async function remove(robotId) {
 
 async function addToChat(robotId, msg) {
     try {
-
+        console.log('robotId', robotId)
+        const collection = await dbService.getCollection(COLLECTION_NAME)
+        const res = await collection.updateOne({ _id: ObjectId(robotId) }, { $push: { chat: msg } })
+        console.log('res', res)
     } catch (err) {
         console.log(`ERROR: cannot add to chat of robot ${robot._id} (robot.service - remove)`)
         throw err
