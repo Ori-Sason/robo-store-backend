@@ -7,7 +7,8 @@ module.exports = {
     getRobotById,
     addRobot,
     updateRobot,
-    removeRobot
+    removeRobot,
+    getRobotStatistics
 }
 
 async function getLabels(req, res) {
@@ -74,5 +75,15 @@ async function removeRobot(req, res) {
     } catch (err) {
         // logger.error('Failed to remove robot', err)
         res.status(500).send({ err: 'Failed to remove robot' })
+    }
+}
+
+async function getRobotStatistics(req, res) {
+    try {
+        const statistics = await robotService.getStatistics()
+        res.send(statistics)
+    } catch (err) {
+        // logger.error('Failed to remove robot', err)
+        res.status(500).send({ err: 'Failed getting robot statistics' })
     }
 }

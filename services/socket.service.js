@@ -17,11 +17,9 @@ function setupSocketAPI(http) {
     gIo.on('connection', socket => {
         // logger.info(`New connected socket [id: ${socket.id}]`)
         socket.on('disconnect', socket => {
-            console.log('disconnected')
             // logger.info(`Socket disconnected [id: ${socket.id}]`)
         })
         socket.on('chat-set-room', roomId => {
-            // if (socket.roomId === roomId) return
             let numOfConnectedUsers
             if (!roomId && socket.roomId) {
                 numOfConnectedUsers = _getNumOfConnectedUsers(socket.roomId, -1)

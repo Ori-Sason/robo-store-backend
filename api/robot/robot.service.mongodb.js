@@ -16,6 +16,7 @@ module.exports = {
     update,
     remove,
     addToChat,
+    getStatistics
 }
 
 function getLabels() {
@@ -170,12 +171,86 @@ async function remove(robotId) {
 
 async function addToChat(robotId, msg) {
     try {
-        console.log('robotId', robotId)
         const collection = await dbService.getCollection(COLLECTION_NAME)
-        const res = await collection.updateOne({ _id: ObjectId(robotId) }, { $push: { chat: msg } })
-        console.log('res', res)
+        await collection.updateOne({ _id: ObjectId(robotId) }, { $push: { chat: msg } })
     } catch (err) {
         console.log(`ERROR: cannot add to chat of robot ${robot._id} (robot.service - remove)`)
+        throw err
+    }
+}
+
+async function getStatistics() {
+    try {
+        const collection = await dbService.getCollection(COLLECTION_NAME)
+        const robots = await collection.find({}).toArray()
+
+        const reviewsCollection = await dbService.getCollection('review')
+        const reviews = await reviewsCollection.find({}).toArray()
+
+        const statisticData = {
+            length: robots.length || 0,
+            mostExpensive: { price: -Infinity },
+            leastExpensive: { price: Infinity },
+            labelMap: {}, //totalPrice: 0, totalInStock, count: 0
+            highestRate: { robot: {}, avgRate: 0 }
+        }
+
+        robots.reduce((acc, robot) => {
+            if (robot.price > acc.mostExpensive.price) acc.mostExpensive = robot
+            if (robot.price < acc.leastExpensive.price) acc.leastExpensive = robot
+
+
+            //labels
+            robot.labels.forEach(label => {
+                if (acc.labelMap[label]) {
+                    const currLabelData = acc.labelMap[label]
+                    currLabelData.totalPrice += +robot.price
+                    if (robot.inStock) currLabelData.totalInStock++
+                    currLabelData.count++
+                } else {
+                    const currLabelData = { totalPrice: +robot.price, count: 1 }
+
+                    if (robot.inStock) currLabelData.totalInStock = 1
+                    else currLabelData.totalInStock = 0 //so in the next round we can do property++
+
+                    acc.labelMap[label] = currLabelData
+                }
+            })
+
+            //rate
+            const totalRateData = { totalRate: 0, count: 0 }
+
+            for (let i = reviews.length - 1; i >= 0; i--) {
+                const review = reviews[i]
+                if (ObjectId(review.robotId).toString() !== ObjectId(robot._id).toString()) continue
+
+                totalRateData.totalRate += +review.rate
+                totalRateData.count++
+
+                reviews.splice(i, 1) //we splice to make the array shorter (less loops)
+            }
+
+            const robotRateAvg = totalRateData.totalRate / totalRateData.count
+
+            if (robotRateAvg > acc.highestRate.avgRate) acc.highestRate = { robot, avgRate: robotRateAvg }
+
+            return acc
+        }, statisticData)
+
+
+        //labels - calculating averages
+        for (const key of Object.keys(statisticData.labelMap)) {
+            const label = statisticData.labelMap[key]
+            label.avgPricePerType = label.totalPrice / label.count
+            label.inStockPercentage = label.totalInStock / label.count * 100
+            delete label.totalPrice
+            delete label.totalInStock
+            delete label.count
+        }
+
+        return statisticData
+    } catch (err) {
+        console.log(`ERROR: cannot get statistic data of robots (robot.service - getStatistics)`)
         throw err
     }
 }
