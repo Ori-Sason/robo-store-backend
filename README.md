@@ -1,4 +1,3 @@
-
 # Robo Store
 
 Robo store is a FAKE online shopping site for purchasing robots.
@@ -37,12 +36,16 @@ To run this project, you will need to add the following environment variables to
 
 
 ## 🚀 About Me
+
 I'm a full stack developer who just finish 4 months of bootcamp.
 
 Started as a CPA in an audit department in PwC Israel and continued to a full-time job as a self-educated developer of automated tools for the different departments in the firm (mainly used VBA, C# and Google Scripts).
 
 Now looking to do my next step as a full stack developer :)
+
+
 ## 🔗 Links
+
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ori-sason-cpa-318062229/)
 
 Also checkout my course final Project - Wixy - website builder, inspired by Wix:
