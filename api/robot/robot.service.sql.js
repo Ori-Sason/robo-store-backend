@@ -38,12 +38,21 @@ async function query(filterBy) {
     if (criteriaCmds.length) criteria = criteriaCmds.join(' AND ')
 
     try {
-        let sqlCmd = `SELECT * FROM robot`
+        let sqlCmd = `SELECT robot.*, user.fullname as ownerFullname 
+                      FROM robot LEFT JOIN user ON robot.ownerId=user._id`
+
         if (criteria) sqlCmd += ' WHERE ' + criteria
 
         let robots = await dbService.runSQL(sqlCmd)
-        robots.forEach(robot => robot.labels = JSON.parse(robot.labels))
-        /* FIX - add owner full name from user table */
+        robots.forEach(robot => {
+            robot.labels = JSON.parse(robot.labels)
+            
+            /* I do the next nesting object since I've started with mongoDB, 
+               so the frontend expects this kind of structure*/
+            robot.owner = { _id: robot.ownerId, fullname: robot.ownerFullname }
+            delete robot.ownerId
+            delete robot.ownerFullname
+        })
 
         let pageIdx = +filterBy.pageIdx
         const numOfPages = Math.ceil(robots.length / PAGE_SIZE)
@@ -64,15 +73,20 @@ async function query(filterBy) {
 
 async function getById(robotId) {
     try {
-        const sqlCmd = `SELECT * FROM robot WHERE robot._id = ${robotId}`
+        let sqlCmd = `SELECT robot.*, user.fullname as ownerFullname
+                      FROM robot
+                      LEFT JOIN user ON robot.ownerId=user._id
+                      WHERE robot._id = ${robotId}`
+
         const robots = await dbService.runSQL(sqlCmd)
         if (robots?.length !== 1) return null //will cause error 401
         const robot = robots[0]
         robot.labels = JSON.parse(robot.labels)
 
-        /* FIX - add owner full name from user table (left join) */
-        robot.owner = { _id: robot.ownerId } /* FIX - this line will be removed */
-        delete robot.ownerId /* FIX - this line need to stay */
+        /* I do this nesting object since I've started with mongoDB, so the frontend expects this kind of structure*/
+        robot.owner = { _id: robot.ownerId, fullname: robot.ownerFullname }
+        delete robot.ownerId
+        delete robot.ownerFullname
         return robot
     } catch (err) {
         console.log(`ERROR: cannot find robot ${robotId} (robot.service - getById)`)
@@ -95,19 +109,16 @@ async function add(robot) {
         }
 
         const sqlCmd = `INSERT INTO robot (name, price, inStock, labels, img, ownerId)
-            VALUES ("${newRobot.name}",
-                    "${newRobot.price}",
-                    "${newRobot.inStock}",
-                    '${JSON.stringify(newRobot.labels)}',
-                    "${newRobot.img}",
-                    "${loggedInUser._id}"
-            )`
+                        VALUES ("${newRobot.name}",
+                                "${newRobot.price}",
+                                "${newRobot.inStock}",
+                                '${JSON.stringify(newRobot.labels)}',
+                                "${newRobot.img}",
+                                "${loggedInUser._id}"
+                        )`
 
         const res = await dbService.runSQL(sqlCmd)
         if (!res.insertId) return null //will cause error 401
-
-        /* FIX - add owner full name from user table */
-
         newRobot._id = res.insertId
         return newRobot
     } catch (err) {
