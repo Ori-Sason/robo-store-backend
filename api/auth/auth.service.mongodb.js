@@ -2,7 +2,8 @@ const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.SECRET1 || 'Secret-Rob-123')
 
 const bcrypt = require('bcrypt')
-const userService = require('../user/user.service.mongodb')
+// const userService = require('../user/user.service.mongodb')
+const userService = require('../user/user.service.sql')
 
 module.exports = {
     login,

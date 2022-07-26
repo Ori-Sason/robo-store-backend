@@ -65,8 +65,14 @@ async function query(filterBy) {
 async function getById(robotId) {
     try {
         const sqlCmd = `SELECT * FROM robot WHERE robot._id = ${robotId}`
-        const robot = await dbService.runSQL(sqlCmd)
-        robot[0].labels = JSON.parse(robot[0].labels)
+        const robots = await dbService.runSQL(sqlCmd)
+        if (robots?.length !== 1) return null //will cause error 401
+        const robot = robots[0]
+        robot.labels = JSON.parse(robot.labels)
+
+        /* FIX - add owner full name from user table (left join) */
+        robot.owner = { _id: robot.ownerId } /* FIX - this line will be removed */
+        delete robot.ownerId /* FIX - this line need to stay */
         return robot
     } catch (err) {
         console.log(`ERROR: cannot find robot ${robotId} (robot.service - getById)`)
@@ -114,19 +120,19 @@ async function add(robot) {
 async function update(robot) {
     try {
         const { loggedInUser } = alsService.getStore()
-        const lastModified = Date.now()
+        const lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-        let sqlCmd = `UPDATE robot set name="${robot.name}",
-                                    img="${robot.img}",
-                                    price="${robot.price}",
-                                    labels='${JSON.stringify(robot.labels)}',
-                                    inStock="${robot.inStock}",
-                                    lastModified="${lastModified}"
-                        WHERE robot._id=${robot._id}`
+        let sqlCmd = `UPDATE robot
+                      SET name="${robot.name}",
+                          img="${robot.img}",
+                          price="${robot.price}",
+                          labels='${JSON.stringify(robot.labels)}',
+                          inStock="${robot.inStock}",
+                          lastModified="${lastModified}"
+                      WHERE robot._id=${robot._id}`
 
         //only the owner of the robot, or admin, can update the robot
         if (!loggedInUser.isAdmin) sqlCmd += ` AND robot.ownerId=${loggedInUser._id}`
-        console.log('sqlCmd', sqlCmd)
 
         const res = await dbService.runSQL(sqlCmd)
         if (!res?.affectedRows) return null //will cause error 401

@@ -1,4 +1,5 @@
-const userService = require('./user.service.mongodb')
+// const userService = require('./user.service.mongodb')
+const userService = require('./user.service.sql')
 
 module.exports = {
     getUsers,
