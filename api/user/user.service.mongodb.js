@@ -27,6 +27,7 @@ async function query() {
         return users
     } catch (err) {
         console.log(`ERROR: cannot find users (user.service - query)`)
+        console.log('err', err)
         // logger.error(`cannot find users`, err)
         throw err
     }
@@ -40,7 +41,7 @@ async function getById(userId) {
         return user
     } catch (err) {
         console.log(`ERROR: cannot find user ${userId} (user.service - getById)`)
-        // logger.error(`cannot find user ${userId}`, err)
+        console.log('err', err)
         throw err
     }
 }
@@ -52,7 +53,7 @@ async function getByUsername(username) {
         return user
     } catch (err) {
         console.log(`ERROR: cannot find user ${username} (user.service - getByUsername)`)
-        // logger.error(`cannot find user ${username}`, err)
+        console.log('err', err)
         throw err
     }
 }
@@ -72,7 +73,7 @@ async function add(user) {
         return newUser
     } catch (err) {
         console.log(`ERROR: cannot add user (user.service - add)`)
-        // logger.error('cannot add user', err)
+        console.log('err', err)
         throw err
     }
 }
@@ -101,10 +102,11 @@ async function update(user) {
         return { ...user, lastModified }
     } catch (err) {
         console.log(`ERROR: cannot update user (user.service - update)`)
-        // logger.error('cannot add user', err)
+        console.log('err', err)
         throw err
     }
 }
+
 async function updateAdmin(user) {
     try {
         const lastModified = Date.now()
@@ -121,7 +123,7 @@ async function updateAdmin(user) {
         return { ...user, lastModified }
     } catch (err) {
         console.log(`ERROR: cannot update user admin mode (user.service - updateAdmin)`)
-        // logger.error('cannot add user', err)
+        console.log('err', err)
         throw err
     }
 }
@@ -133,7 +135,7 @@ async function remove(userId) {
         return deletedCount
     } catch (err) {
         console.log(`ERROR: cannot delete user (user.service - remove)`)
-        // logger.error('cannot add user', err)
+        console.log('err', err)
         throw err
     }
 }

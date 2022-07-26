@@ -17,13 +17,13 @@ async function getUsers(req, res) {
         res.send(users)
     } catch (err) {
         // logger.error('Failed to get users', err)
-        res.status(500).send({ err: 'Failed to get robots' })
+        res.status(500).send({ err: 'Failed to get users' })
     }
 }
 
 async function getUserById(req, res) {
     try {
-        const userId = req.params.userId
+        const { userId } = req.params
         const user = await userService.getById(userId)
         if (!user) return res.status(401).send('Failed to get user')
         res.send(user)

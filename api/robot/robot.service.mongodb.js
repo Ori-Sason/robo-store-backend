@@ -1,6 +1,5 @@
 const dbService = require('../../services/mongodb.service')
 const alsService = require('../../services/als.service')
-//logger
 const ObjectId = require('mongodb').ObjectId
 
 const gLabels = ["On wheels", "Box game", "Art", "Baby", "Doll", "Puzzle", "Outdoor"] /* FIX - make a collection in mongo */

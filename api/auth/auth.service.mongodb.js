@@ -1,9 +1,8 @@
 const Cryptr = require('cryptr')
-const cryptr = new Cryptr(process.env.SECRET1 || 'Secret-Rob-123') /* FIX - add SECRET1 in production environment */
+const cryptr = new Cryptr(process.env.SECRET1 || 'Secret-Rob-123')
 
 const bcrypt = require('bcrypt')
 const userService = require('../user/user.service.mongodb')
-// const logger = require('../../services/logger.service')
 
 module.exports = {
     login,
@@ -41,6 +40,7 @@ async function signup(username, password, fullname) {
         return userService.add({ username, password: hash, fullname })
     } catch (err) {
         console.log(`ERROR: cannot signup user (auth.service - signup)`)
+        console.log('err', err)
         throw err
     }
 }

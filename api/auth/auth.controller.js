@@ -18,7 +18,6 @@ async function login(req, res) {
         res.cookie(COOKIE_NAME, loginToken)
         res.json(user)
     } catch (err) {
-        console.log('err', err)
         // logger.error('Failed to login', err)
         res.status(401).send({ err: 'Failed to login' })
     }
@@ -35,7 +34,6 @@ async function signup(req, res) {
         res.json(user)
     } catch (err) {
         if (err = 'Username already taken') return res.status(406).send(err)
-        console.log('err', err)
         // logger.error('Failed to signup', err)
         res.status(401).send({ err: 'Failed to signup' })
     }
