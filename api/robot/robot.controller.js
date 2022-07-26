@@ -1,4 +1,5 @@
-const robotService = require('./robot.service.mongodb')
+// const robotService = require('./robot.service.mongodb')
+const robotService = require('./robot.service.sql')
 // const logger = require('../../services/logger.service')
 
 module.exports = {
@@ -27,6 +28,7 @@ async function getRobots(req, res) {
         const robots = await robotService.query(filterBy || '{}')
         res.send(robots)
     } catch (err) {
+        console.log('err', err)
         // logger.error('Failed to get robots', err)
         res.status(500).send({ err: 'Failed to get robots' })
     }
@@ -45,7 +47,7 @@ async function getRobotById(req, res) {
 
 async function addRobot(req, res) {
     try {
-        const robot = req.body
+        const robot = req.body        
         const savedRobot = await robotService.add(robot)
         if (!savedRobot) return res.status(401).send('Failed to add robot')
         res.send(savedRobot)
