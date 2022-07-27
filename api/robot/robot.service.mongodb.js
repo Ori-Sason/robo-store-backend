@@ -173,7 +173,7 @@ async function addToChat(robotId, msg) {
         const collection = await dbService.getCollection(COLLECTION_NAME)
         await collection.updateOne({ _id: ObjectId(robotId) }, { $push: { chat: msg } })
     } catch (err) {
-        console.log(`ERROR: cannot add to chat of robot ${robot._id} (robot.service - remove)`)
+        console.log(`ERROR: cannot add to chat of robot ${robotId} (robot.service - remove)`)
         throw err
     }
 }

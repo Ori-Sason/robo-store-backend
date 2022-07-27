@@ -12,14 +12,13 @@ module.exports = {
     add,
     update,
     remove,
-    /* FIX - addToChat */
-    /* FIX - getSTatistics */
+    addToChat
+    /* FIX - getStatistics */
 }
 
 function getLabels() {
     return Promise.resolve(gLabels.sort())
 }
-
 
 async function query(filterBy) {
 
@@ -46,7 +45,7 @@ async function query(filterBy) {
         let robots = await dbService.runSQL(sqlCmd)
         robots.forEach(robot => {
             robot.labels = JSON.parse(robot.labels)
-            
+
             /* I do the next nesting object since I've started with mongoDB, 
                so the frontend expects this kind of structure*/
             robot.owner = { _id: robot.ownerId, fullname: robot.ownerFullname }
@@ -87,6 +86,7 @@ async function getById(robotId) {
         robot.owner = { _id: robot.ownerId, fullname: robot.ownerFullname }
         delete robot.ownerId
         delete robot.ownerFullname
+        robot.chat = await _getRobotChat(robotId)
         return robot
     } catch (err) {
         console.log(`ERROR: cannot find robot ${robotId} (robot.service - getById)`)
@@ -170,6 +170,44 @@ async function remove(robotId) {
         return res.affectedRows
     } catch (err) {
         console.log(`ERROR: cannot remove robot ${robot._id} (robot.service - remove)`)
+        console.log('err', err)
+        throw err
+    }
+}
+
+async function addToChat(robotId, msg) {
+    try {
+        const txt = msg.txt
+        const userId = msg.user?._id || null
+
+        const sqlCmd = `INSERT INTO chat (txt, userId, robotId)
+                        VALUES ("${txt}", ${userId}, ${robotId})`
+
+        await dbService.runSQL(sqlCmd)
+        _getRobotChat(1)
+    } catch (err) {
+        console.log(`ERROR: cannot add to chat of robot ${robotId} (robot.service - addToChat)`)
+        console.log('err', err)
+        throw err
+    }
+}
+
+async function _getRobotChat(robotId) {
+    try {
+        const sqlCmd = `SELECT chat.*, user.fullname FROM chat 
+                        LEFT JOIN user ON chat.userId=user._id
+                        WHERE robotId=${robotId}`
+
+        const chat = await dbService.runSQL(sqlCmd)
+        chat.forEach(msg => {
+            if (msg.userId) msg.user = { _id: msg.userId, fullname: msg.fullname }
+            delete msg.userId
+            delete msg.robotId
+            delete msg.fullname
+        })
+        return chat
+    } catch (err) {
+        console.log(`ERROR: cannot get chat of robot ${robotId} (robot.service - _getRobotChat)`)
         console.log('err', err)
         throw err
     }
