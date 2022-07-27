@@ -11,12 +11,13 @@ module.exports = {
 
 async function query(filterBy) {
     try {
-        console.log('filterBy', filterBy)
-        let sqlCmd = `SELECT reviews.*, user.fullname as ownerFullname
-                      FROM (SELECT review.*, user.fullname AS userFullname, robot.name AS robotName, robot.ownerId
-                            FROM review
-                            LEFT JOIN user ON review.userId=user._id
-                            LEFT JOIN robot ON review.robotId=robot._id) AS reviews`
+        let sqlCmd = `SELECT review.*, user.fullname AS userFullname, robot.name AS robotName, robot.ownerId, robot.ownerFullname
+                      FROM review
+                      LEFT JOIN user ON review.userId=user._id
+                      LEFT JOIN (SELECT robot.*, user.fullname AS ownerFullname 
+                                 FROM robot 
+                                 LEFT JOIN user ON robot.ownerId=user._id)
+                            AS robot ON review.robotId=robot._id`
 
         if (Object.keys(filterBy).length) {
             const criteria = []
@@ -27,8 +28,6 @@ async function query(filterBy) {
 
             sqlCmd += criteria.join(',')
         }
-
-        sqlCmd += ' LEFT JOIN user ON reviews.ownerId=user._id'
 
         const reviews = await dbService.runSQL(sqlCmd)
         reviews.forEach(review => {
