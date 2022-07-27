@@ -139,7 +139,7 @@ async function update(robot) {
                           img="${robot.img}",
                           price="${robot.price}",
                           labels='${JSON.stringify(robot.labels)}',
-                          inStock="${robot.inStock}",
+                          inStock="${robot.inStock ? 1 : 0}",
                           lastModified="${lastModified}"
                       WHERE robot._id=${robot._id}`
 
@@ -159,7 +159,6 @@ async function update(robot) {
 async function remove(robotId) {
     try {
         const { loggedInUser } = alsService.getStore()
-        loggedInUser._id = 62
 
         let sqlCmd = `DELETE FROM robot WHERE robot._id=${robotId}`
 

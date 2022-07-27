@@ -63,6 +63,7 @@ async function query(filterBy) {
         return reviews
     } catch (err) {
         console.log(`ERROR: cannot find reviews (robot.service - query)`)
+        console.log('err', err)
         throw err
     }
 }
@@ -82,6 +83,7 @@ async function getById(reviewId) {
         return review
     } catch (err) {
         console.log(`ERROR: cannot find review ${reviewId} (review.service - getById)`)
+        console.log('err', err)
         throw err
     }
 }
@@ -101,12 +103,12 @@ async function add(review) {
         }
 
         const res = await collection.insertOne(newReview)
-        console.log('res', res)
         if (!res.insertedId) return null //will cause error 401
         newReview._id = res.insertedId
         return newReview
     } catch (err) {
-        console.log(`ERROR: cannot add review ${reviewId} (review.service - add)`)
+        console.log(`ERROR: cannot add review ${review.robotId} (review.service - add)`)
+        console.log('err', err)
         throw err
     }
 }
@@ -126,7 +128,8 @@ async function update(review) {
         if (!res.modifiedCount) return null //will cause error 401
         return { ...review, lastModified }
     } catch (err) {
-        console.log(`ERROR: cannot update review ${reviewId} (review.service - update)`)
+        console.log(`ERROR: cannot update review ${review._id} (review.service - update)`)
+        console.log('err', err)
         throw err
     }
 }
@@ -138,6 +141,7 @@ async function remove(reviewId) {
         return deletedCount
     } catch (err) {
         console.log(`ERROR: cannot delete review ${reviewId} (review.service - delete)`)
+        console.log('err', err)
         throw err
     }
 }
