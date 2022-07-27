@@ -250,6 +250,7 @@ async function getStatistics() {
         return statisticData
     } catch (err) {
         console.log(`ERROR: cannot get statistic data of robots (robot.service - getStatistics)`)
+        console.log('err', err)
         throw err
     }
 }
