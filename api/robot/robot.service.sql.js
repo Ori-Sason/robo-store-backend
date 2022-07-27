@@ -102,11 +102,12 @@ async function add(robot) {
         const newRobot = {
             name: robot.name,
             price: robot.price,
-            inStock: robot.inStock,
+            inStock: robot.inStock ? 1 : 0,
             labels: robot.labels,
             img: robot.img,
             ownerId: loggedInUser._id
         }
+        console.log('newRobot', newRobot)
 
         const sqlCmd = `INSERT INTO robot (name, price, inStock, labels, img, ownerId)
                         VALUES ("${newRobot.name}",
