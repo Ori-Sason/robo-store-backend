@@ -1,5 +1,5 @@
-// const reviewService = require('./review.service.mongodb')
-const reviewService = require('./review.service.sql')
+const reviewService = require('./review.service.mongodb')
+// const reviewService = require('./review.service.sql')
 // const logger = require('../../services/logger.service')
 
 module.exports = {

@@ -105,6 +105,8 @@ async function add(review) {
         const res = await collection.insertOne(newReview)
         if (!res.insertedId) return null //will cause error 401
         newReview._id = res.insertedId
+        newReview.byUser = {_id: loggedInUser._id, fullname: loggedInUser.fullname}
+        newReview.createdAt = ObjectId(res.insertedId).getTimestamp()
         return newReview
     } catch (err) {
         console.log(`ERROR: cannot add review ${review.robotId} (review.service - add)`)

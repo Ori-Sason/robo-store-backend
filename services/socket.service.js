@@ -1,6 +1,6 @@
 // const logger = require('./logger.service')
-// const robotService = require('../api/robot/robot.service.mongodb')
-const robotService = require('../api/robot/robot.service.sql')
+const robotService = require('../api/robot/robot.service.mongodb')
+// const robotService = require('../api/robot/robot.service.sql')
 
 let gIo = null
 

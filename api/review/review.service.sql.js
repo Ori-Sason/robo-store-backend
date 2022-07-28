@@ -73,7 +73,8 @@ async function add(review) {
         const res = await dbService.runSQL(sqlCmd)
         if (!res.insertId) return null //will cause error 401
         review._id = res.insertId
-        review.userId = loggedInUser._id
+        review.createdAt = Date.now()
+        review.byUser = {_id: loggedInUser._id, fullname: loggedInUser.fullname}
         return review
     } catch (err) {
         console.log(`ERROR: cannot add review to robot ${review.robotId} (review.service - add)`)
