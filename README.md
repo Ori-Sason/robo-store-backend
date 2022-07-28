@@ -11,8 +11,13 @@ Heroku: https://robo-store.herokuapp.com/#/
 
 **Client:** React (including Web Sockets and PWA), Redux, SASS.
 
-**Server:** Node, Express, MongoDB.
+**Server:** Node, Express, MongoDB/SQL (check point below).
 
+- The backend support MongoDB and SQL. In order to switch between the two: comment-uncomment the top lines at:
+  1. api/*/*.controller.js
+  2. api/auth/auth.service.js
+  3. services.socket.js
+  At the moment, on production I used MongoDB database.
 
 ## Features
 

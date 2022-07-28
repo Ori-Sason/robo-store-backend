@@ -1,5 +1,5 @@
 // const logger = require('../services/logger.service')
-const authService = require('../api/auth/auth.service.mongodb')
+const authService = require('../api/auth/auth.service')
 const alsService = require('../services/als.service')
 
 module.exports = {

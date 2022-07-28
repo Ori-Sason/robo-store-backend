@@ -1,4 +1,4 @@
-const authService = require('../api/auth/auth.service.mongodb')
+const authService = require('../api/auth/auth.service')
 const asyncLocalStorage = require('../services/als.service')
 
 module.exports = setupAsyncLocalStorage

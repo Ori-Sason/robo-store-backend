@@ -1,4 +1,4 @@
-const authService = require('./auth.service.mongodb')
+const authService = require('./auth.service')
 // const logger = require('../../services/logger.service')
 
 const COOKIE_NAME = 'loginToken'
